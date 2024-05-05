@@ -1,0 +1,95 @@
+import { useEffect, useState } from 'react';
+import { useSocket } from './context/SocketContext';
+import { generateRandomCode } from './ultis/generationCode';
+import { messages } from 'react-stomp-hooks/dist/mock/client';
+import { Link } from 'react-router-dom';
+
+function Home() {
+  const [criador, setCriador] = useState(false);
+  const [convidado, setConvidado] = useState(false);
+  const [codigoConvidado, setCodigoConvidado] = useState("");
+  const [codigoCriadoSala, setCodigoCriadoSala] = useState("");
+  const [usuariosConectados, setUsuariosConectados] = useState(1);
+
+  const { socket }: any = useSocket();
+
+  useEffect(() => {
+    socket.on("msg-sala", (message) => {
+      if (message.type == "new_user" || message.type == "left_user") {
+        console.log(message.type)
+        setUsuariosConectados(message.users_conected)
+      }
+      console.log(message)
+    })
+
+  }, []);
+
+  function criarSala() {
+    const codigo = generateRandomCode()
+    socket.emit("cria_sala_e_entrar", codigo);
+    setCriador(true)
+    setCodigoCriadoSala(codigo)
+  }
+
+  function entrarEmSala() {
+    socket.emit("entrar_sala", codigoConvidado);
+  }
+
+
+
+  return (
+    <div className='flex justify-center items-center h-screen w-full bg-cover bg-no-repeat bg-center bg-[url("./assets/header_keyart__3_.avif")] '>
+      <div className='bg-slate-300 w-2/4 px-10 py-5'>
+        
+          <div className='flex justify-around'>
+            <Link to="/createRoom">
+            <button onClick={criarSala} className=" w-2/5 h-16 inline-flex text-md font-medium bg-indigo-900 mt-3 px-4 py-2 rounded-lg tracking-wide text-white">
+              <span>Criar Sala</span>
+            </button>
+            </Link>
+            
+            <Link to="/joinRoom">
+            <button onClick={() => setConvidado(true)} className=" w-2/5 h-16 inline-flex text-md font-medium bg-indigo-900 mt-3 px-4 py-2 rounded-lg tracking-wide text-white">
+              <span>Entrar em Sala</span>
+            </button>
+            </Link>
+          </div>
+  
+
+        {/* {criador && (
+          <div>
+            <div className='flex flex-col items-center'>
+              <h4>Codigo da Sala:</h4>
+              <h1 className='text-6xl'>{codigoCriadoSala}</h1>
+            </div>
+
+            <div>Jogadores conectados ({usuariosConectados})</div>
+            <ul>
+              <li>teste</li>
+              <li>teste</li>
+            </ul>
+            {usuariosConectados > 1 && (
+              <button onClick={entrarEmSala} className="inline-flex text-md font-medium bg-indigo-900 mt-3 px-4 py-2 rounded-lg tracking-wide text-white">
+                <span>Iniciar Partida</span>
+              </button>
+            )}
+
+          </div>
+        )}
+
+        {convidado && (
+          <div className='flex flex-col justify-center items-center gap-5'>
+            <input type="text" placeholder='Digite seu Nome' className='rounded-lg p-3' />
+            <input onChange={(e) => setCodigoConvidado(e.target.value)} type="text" placeholder='Digite o ID da Sala' className='rounded-lg p-3' />
+
+            <button onClick={entrarEmSala} className="inline-flex text-md font-medium bg-indigo-900 mt-3 px-4 py-2 rounded-lg tracking-wide text-white">
+              <span>Entrar</span>
+            </button>
+          </div>
+        )} */}
+      </div>
+    </div>
+  );
+}
+
+export default Home;
