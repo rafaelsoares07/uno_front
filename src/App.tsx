@@ -6,6 +6,7 @@ import "./index.css"
 import CreateRoom from './CreateRoom';
 import JoinRoom from './JoinRoom';
 import Room from './Room';
+import Game from './Game';
 
 
 const App = () => {
@@ -19,6 +20,7 @@ const App = () => {
       <Route path="/createRoom" element={<CreateRoom />} />
       <Route path="/joinRoom" element={<JoinRoom />} />
       <Route path='/room/:roomId' element={<Room/>}></Route>
+      <Route path='/game/:gameRoom' element={<Game/>}></Route>
     </Routes>
     </SocketContext.Provider>
     
