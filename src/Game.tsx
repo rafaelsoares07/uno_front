@@ -13,18 +13,22 @@ function Game() {
     const [gameData, setGameData] = React.useState(null);
     const [user, setUser] = React.useState(state.user);
     const [myTurn, setMyTurn] = React.useState(false);
-    const [isDragging, setIsDragging] = React.useState(true);
+    const [isDragging, setIsDragging] = React.useState(false);
 
 
     useEffect(() => {
 
-        socket.emit("initial_game_setup", user.room, (response: any) => {
-            setGameData(response)
+        socket.emit("initial_game_setup", user.room, (gameData: any) => {
+            setGameData(gameData)
         })
 
-        socket.on("action_game", (response:any) => {
-            console.log(response)
-            setGameData(response)
+        socket.on("action_game_play_card", (gameData:any) => {
+            console.log(gameData)
+            setGameData(gameData)
+        })
+
+        socket.on("action_game_drag_card", (newArrayCards:any)=>{
+            setPlayerCards(newArrayCards)
         })
 
     }, []);
@@ -82,7 +86,7 @@ function Game() {
         } else {
             console.log("NAO E MEU TURNO")
             setMyTurn(false)
-            setIsDragging(false)
+            
         }
     }
 
@@ -103,6 +107,12 @@ function Game() {
 
             {isDragging && myTurn ? (
                 <button onClick={pickCart} className='bg-green-500 p-2'>Puxar Carta</button>
+            ) : (
+                null
+            )}
+
+            {!isDragging && myTurn?(
+                <button onClick={pickCart} className='bg-blue-600 p-2'>Passar a vez</button>
             ) : (
                 null
             )}
