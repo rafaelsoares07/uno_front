@@ -2,7 +2,8 @@ import React, { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import cardImages from './ultis/cardImport';
 import { useSocket } from './context/SocketContext';
-import baralho from "./assets/cards-front/D4W.png"
+import playCardAudio from "./assets/audio/play_card.mp3"
+import pickCardAudio from "./assets/audio/pick_card.mp3"
 
 function Game() {
     const { socket }: any = useSocket();
@@ -18,24 +19,30 @@ function Game() {
 
     useEffect(() => {
 
+
         socket.emit("initial_game_setup", user.room, (gameData: any) => {
             setGameData(gameData)
         })
 
-        socket.on("action_game_play_card", (gameData:any) => {
+        socket.on("action_game_play_card", (gameData: any) => {
             console.log(gameData)
             setGameData(gameData)
+            const snd = new Audio(playCardAudio);
+            snd.play();
         })
 
-        socket.on("action_game_drag_card", (newArrayCards:any)=>{
-            setPlayerCards(newArrayCards)
+        socket.on("action_game_drag_card", (gameData: any) => {
+            console.log(gameData)
+            setGameData(gameData)
+            const snd = new Audio(pickCardAudio);
+            snd.play();
         })
 
     }, []);
 
     useEffect(() => {
 
-        if (gameData ) {
+        if (gameData) {
             setCardsToPlayer()
             checkMyTurn()
         }
@@ -45,7 +52,13 @@ function Game() {
 
     function pickCart() {
         if (myTurn) {
-            socket.emit("pick_card", gameData)
+
+            socket.emit("pick_card", gameData, (callbak: any) => {
+                console.log(callbak)
+                setPlayerCards(callbak)
+                const snd = new Audio(pickCardAudio);
+                snd.play();
+            })
             setIsDragging(false)
         } else {
             alert("Aguarde sua vez de jogar!")
@@ -53,7 +66,9 @@ function Game() {
     }
 
     function playCard(card: any) {
+
         if (myTurn) {
+
             socket.emit("play_card", gameData, card, (response: any) => {
                 if (response.type == "ERRO") {
                     //se deu erro nao atualizou turno para o proximo jogador
@@ -78,20 +93,20 @@ function Game() {
     }
 
     function checkMyTurn() {
-        
-        if (gameData.current_turn === user.socketId ) {
+
+        if (gameData.current_turn === user.socketId) {
             console.log("MEU TURNO")
             setMyTurn(true)
             setIsDragging(true)
         } else {
             console.log("NAO E MEU TURNO")
             setMyTurn(false)
-            
+
         }
     }
 
 
-    console.log(isDragging)
+
 
     return (
         <div>
@@ -102,7 +117,31 @@ function Game() {
                     return <img onClick={() => playCard(el)} key={index} className='w-14' src={cardImages[el.name]} />;
                 })}
             </div>
-            {gameData?.last_card_played != null ? <img className='w-32' src={cardImages[gameData?.last_card_played.name]} /> : <p>Nao jogou ainda</p>}
+
+
+            <div className='flex justify-center w-64 h-80 bg-slate-500 p-4  relative p-5'>
+                {
+                    gameData?.deck_discard?.map((el, index) => {
+                        if (index % 2 === 0) {
+                            return (
+                                <img key={index} className='w-32 -rotate-12 absolute' src={cardImages[el.name]} alt={el.name} />
+                            );
+                        }
+                        else if (index % 3 === 0) {
+                            return (
+                                <img key={index} className='w-32 rotate-0 absolute' src={cardImages[el.name]} alt={el.name} />
+                            );
+                        }
+                        else {
+                            return (
+                                <img key={index} className='w-32 rotate-12 absolute' src={cardImages[el.name]} alt={el.name} />
+                            );
+                        }
+
+                    })
+                }
+            </div>
+            {/* {gameData?.last_card_played != null ? <img className='w-32' src={cardImages[gameData?.last_card_played.name]} /> : <p>Nao jogou ainda</p>} */}
 
 
             {isDragging && myTurn ? (
@@ -111,7 +150,7 @@ function Game() {
                 null
             )}
 
-            {!isDragging && myTurn?(
+            {!isDragging && myTurn ? (
                 <button onClick={pickCart} className='bg-blue-600 p-2'>Passar a vez</button>
             ) : (
                 null

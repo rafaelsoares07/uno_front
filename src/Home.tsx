@@ -9,7 +9,7 @@ function Home() {
         <div className='flex flex-col justify-around gap-5'>
           <Link to="/createRoom">
             <div className="flex rounded-full mx-auto bg-gradient-to-tr from-red-400 via-orange-400 to-rose-400 p-1 shadow-lg">
-              <button className="flex-1 font-bold text-xl bg-white px-6 py-1 rounded-full">
+              <button className="flex-1 font-bold text-xl bg-white px-6 py-1 rounded-full ">
                 CRIAR SALA
               </button>
             </div>
