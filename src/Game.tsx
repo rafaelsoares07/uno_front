@@ -17,7 +17,7 @@ function Game() {
     const [user, setUser] = React.useState(state.user);
     const [myTurn, setMyTurn] = React.useState(false);
     const [isDragging, setIsDragging] = React.useState(false);
-
+    const [iCanPassTurn, setICanPassTurn] = React.useState(false)
 
     useEffect(() => {
 
@@ -101,6 +101,7 @@ function Game() {
                     //nao e mais seu turno
                     setMyTurn(false)
                     setIsDragging(false)
+                    setICanPassTurn(false)
                 }
             })
         } else {
@@ -121,6 +122,7 @@ function Game() {
             console.log("MEU TURNO")
             setMyTurn(true)
             setIsDragging(true)
+            setICanPassTurn(true)
         } else {
             console.log("NAO E MEU TURNO")
             setMyTurn(false)
@@ -128,6 +130,16 @@ function Game() {
         }
     }
 
+    function passTheTurn(){
+        if (myTurn) {
+            socket.emit("pass_turn", gameData,(response: any) => { 
+                console.log(response)
+                setMyTurn(false)
+                setIsDragging(false)
+                setICanPassTurn(false)
+            })
+        } 
+    }
 
 
 
@@ -187,8 +199,8 @@ function Game() {
                 null
             )}
 
-            {!isDragging && myTurn ? (
-                <button onClick={pickCart} className='bg-blue-600 p-2'>Passar a vez</button>
+            {!isDragging && myTurn && iCanPassTurn ? (
+                <button onClick={passTheTurn} className='bg-blue-600 p-2'>Passar a vez</button>
             ) : (
                 null
             )}
