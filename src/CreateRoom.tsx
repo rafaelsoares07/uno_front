@@ -1,5 +1,4 @@
 import React, { useState } from "react"
-import avatar from "./assets/girl.png"
 import { generateRandomCode } from "./ultis/generationCode";
 import { useSocket } from "./context/SocketContext";
 import { Navigate } from "react-router-dom";
