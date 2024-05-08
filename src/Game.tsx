@@ -5,6 +5,8 @@ import { useSocket } from './context/SocketContext';
 import playCardAudio from "./assets/audio/play_card.mp3"
 import pickCardAudio from "./assets/audio/pick_card.mp3"
 import wildCardAudio from "./assets/audio/suspense_wild_card.mp3"
+import cardBack from "./assets/assets/card-back.png"
+
 function Game() {
     const { socket }: any = useSocket();
     const location = useLocation();
@@ -131,6 +133,20 @@ function Game() {
 
     return (
         <div>
+            {gameData?.players.filter(el=>el.socket_id!=user.socketId).map((el, index) => {
+                return(
+                    <div>
+                        <p>{el.name}</p>
+                        <img className='w-10' src={el.img_avatar} alt="" srcset="" />
+                        <div className='flex'>
+                        {el.deck.map(el => <img className='w-10' src={cardBack}/>)}
+                        {el.deck.length} Cartas restantes
+                        </div>
+                    </div>
+                    
+                )
+            })}
+
             <h1 className='text-4xl'>Game</h1>
             {myTurn ? <p>Sua vez de jogar</p> : <p>Aguarde sua vez jogar</p>}
             <div className='flex gap-5'>
