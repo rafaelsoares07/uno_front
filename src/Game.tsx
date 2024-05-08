@@ -4,7 +4,7 @@ import cardImages from './ultis/cardImport';
 import { useSocket } from './context/SocketContext';
 import playCardAudio from "./assets/audio/play_card.mp3"
 import pickCardAudio from "./assets/audio/pick_card.mp3"
-
+import wildCardAudio from "./assets/audio/suspense_wild_card.mp3"
 function Game() {
     const { socket }: any = useSocket();
     const location = useLocation();
@@ -27,8 +27,15 @@ function Game() {
         socket.on("action_game_play_card", (gameData: any) => {
             console.log(gameData)
             setGameData(gameData)
-            const snd = new Audio(playCardAudio);
-            snd.play();
+
+            if(gameData.last_card_played.type==="Wild Card"){
+                const snd = new Audio(wildCardAudio);
+                snd.play();
+            }else{
+                const snd = new Audio(playCardAudio);
+                snd.play();
+            }
+           
         })
 
         socket.on("action_game_drag_card", (gameData: any) => {
@@ -45,6 +52,10 @@ function Game() {
         if (gameData) {
             setCardsToPlayer()
             checkMyTurn()
+        }
+
+        if(gameData){
+            console.log(true)
         }
 
     }, [gameData]);
@@ -67,9 +78,19 @@ function Game() {
 
     function playCard(card: any) {
 
+        let newCard = card
+
+        if(card.type==="Wild Card"){
+            let foo = prompt('Escolha uma cor: G (Green), B(Blue), Y(Yellow) ou R(Red)');
+            let bar = confirm('Confirm or deny');
+            console.log(foo) //valor
+            console.log(bar)
+            newCard.color=foo
+        }
+
         if (myTurn) {
 
-            socket.emit("play_card", gameData, card, (response: any) => {
+            socket.emit("play_card", gameData, newCard, (response: any) => {
                 if (response.type == "ERRO") {
                     //se deu erro nao atualizou turno para o proximo jogador
                     alert(response.message)
