@@ -1,11 +1,10 @@
 import { io } from 'socket.io-client';
-import dotenv from "dotenv"
-
-dotenv.config()
 
 let URL;
 
-if(process.env.MODE === "DEV"){
+const isDevelopment = import.meta.env.MODE === 'DEV';
+
+if(isDevelopment){
     URL = 'http://192.168.0.14:3001';
 }else{
     URL="https://api.render.com/deploy/srv-cotevv7109ks73ajorm0?key=Ba3Z-CbrrYs"
