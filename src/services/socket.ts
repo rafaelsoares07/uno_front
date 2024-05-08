@@ -2,7 +2,7 @@ import { io } from 'socket.io-client';
 
 let URL;
 
-const isDevelopment = import.meta.env.MODE === 'DEV';
+const isDevelopment = import.meta.env.MODE == 'development';
 
 if(isDevelopment){
     URL = 'http://192.168.0.14:3001';
