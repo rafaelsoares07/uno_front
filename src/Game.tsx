@@ -163,7 +163,7 @@ function Game() {
             {myTurn ? <p>Sua vez de jogar</p> : <p>Aguarde sua vez jogar</p>}
             <div className='flex gap-5'>
                 {playerCards?.length > 0 && playerCards.map((el, index) => {
-                    return <img onClick={() => playCard(el)} key={index} className='w-14' src={cardImages[el.name]} />;
+                    return <img onClick={() => playCard(el)} onDoubleClick={()=>playCard(el)} key={index} className='w-14 cursor-pointer' src={cardImages[el.name]} />;
                 })}
             </div>
 
