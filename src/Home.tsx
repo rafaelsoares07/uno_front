@@ -1,11 +1,22 @@
 import { Navigate } from "react-router-dom";
 import { toggleFullscreen } from './ultis/fullScreen';
 import React, { useEffect, useState } from "react";
+import animationRotation from "./lotties/anime-rotation.json"
+import Lottie from "react-lottie"
 
 function Home() {
   const [redirectCreateRoom, setRedirectCreateRoom] = React.useState(false);
   const [redirectJoinRoom, setRedirectJoinRoom] = React.useState(false);
   const [showAlert, setShowAlert] = useState(false);
+
+  const defaultOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: animationRotation,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice"
+    }
+  };
 
   useEffect(() => {
 
@@ -65,8 +76,13 @@ function Home() {
         </div>
       </div>
       {showAlert && (
-        <div className="absolute top-0 left-0 right-0 bg-red-500 text-white p-4 text-center">
-          Gire o dispositivo para a orientação paisagem para a melhor experiência.
+        <div className="absolute top-0 left-0 right-0 h-screen bg-gray-800 text-white text-2xl font-bold p-4 text-center">
+          <p>Gire o dispositivo para a orientação paisagem para ter uma melhor experiência.</p>
+          <Lottie 
+	    options={defaultOptions}
+        height={400}
+        width={400}
+      />
         </div>
       )}
     </div>
