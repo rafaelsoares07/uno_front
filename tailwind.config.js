@@ -5,7 +5,15 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors:{
+        amarelo:"#F3BC00",
+        verde:"#77AA4E"
+      },
+      fontFamily:{
+        lilita:["Lilita One"]
+      }
+    },
   },
   plugins: [],
 }

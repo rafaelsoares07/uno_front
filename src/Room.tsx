@@ -46,7 +46,8 @@ function Room() {
   return (
     <div className='h-screen flex'>
 
-      <div className='bg-blue-400 w-1/5 p-3'>
+      <div className='bg-blue-400 w-2/5 p-3'>
+        <h1> CODE ROOM: {state.room}</h1>
         {usersConected?.map((el) => {
           return (
             <div className={`py-3 border-2 rounded-2xl border-gray-200 my-1 p-2 ${el.socket_id === state.socketId ? "bg-orange-400" : ""} ${el.owner ? "bg-yellow-400" : ""}`} key={el}>
