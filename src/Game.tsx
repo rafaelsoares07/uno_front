@@ -6,6 +6,7 @@ import playCardAudio from "./assets/audio/play_card.mp3"
 import pickCardAudio from "./assets/audio/pick_card.mp3"
 import wildCardAudio from "./assets/audio/suspense_wild_card.mp3"
 import cardBack from "./assets/assets/card-back.png"
+import Modal from './SpecialCardModal'
 
 function Game() {
     const { socket }: any = useSocket();
@@ -27,21 +28,17 @@ function Game() {
         })
 
         socket.on("action_game_play_card", (gameData: any) => {
-            console.log(gameData)
+            // console.log(gameData)
             setGameData(gameData)
 
-            if(gameData.last_card_played.type==="Wild Card"){
-                const snd = new Audio(wildCardAudio);
-                snd.play();
-            }else{
-                const snd = new Audio(playCardAudio);
-                snd.play();
-            }
+            const snd = new Audio(playCardAudio);
+            snd.play();
            
+
         })
 
         socket.on("action_game_drag_card", (gameData: any) => {
-            console.log(gameData)
+            // console.log(gameData)
             setGameData(gameData)
             const snd = new Audio(pickCardAudio);
             snd.play();
@@ -56,9 +53,11 @@ function Game() {
             checkMyTurn()
         }
 
-        if(gameData){
-            console.log(true)
+        if (gameData) {
+            // console.log(true)
         }
+
+        console.log(gameData)
 
     }, [gameData]);
 
@@ -67,7 +66,7 @@ function Game() {
         if (myTurn) {
 
             socket.emit("pick_card", gameData, (callbak: any) => {
-                console.log(callbak)
+                // console.log(callbak)
                 setPlayerCards(callbak)
                 const snd = new Audio(pickCardAudio);
                 snd.play();
@@ -82,12 +81,12 @@ function Game() {
 
         let newCard = card
 
-        if(card.type==="Wild Card"){
+        if (card.type === "Wild Card") {
             let foo = prompt('Escolha uma cor: G (Green), B(Blue), Y(Yellow) ou R(Red)');
             let bar = confirm('Confirm or deny');
-            console.log(foo) //valor
-            console.log(bar)
-            newCard.color=foo
+            // console.log(foo) 
+            // console.log(bar)
+            newCard.color = foo
         }
 
         if (myTurn) {
@@ -97,7 +96,7 @@ function Game() {
                     //se deu erro nao atualizou turno para o proximo jogador
                     alert(response.message)
                 } else {
-                    console.log(playerCards)
+                    // console.log(playerCards)
                     //nao e mais seu turno
                     setMyTurn(false)
                     setIsDragging(false)
@@ -119,43 +118,46 @@ function Game() {
     function checkMyTurn() {
 
         if (gameData.current_turn === user.socketId) {
-            console.log("MEU TURNO")
+            // console.log("MEU TURNO")
             setMyTurn(true)
             setIsDragging(true)
             setICanPassTurn(true)
         } else {
-            console.log("NAO E MEU TURNO")
+            // console.log("NAO E MEU TURNO")
             setMyTurn(false)
 
         }
     }
 
-    function passTheTurn(){
+    function passTheTurn() {
         if (myTurn) {
-            socket.emit("pass_turn", gameData,(response: any) => { 
-                console.log(response)
+            socket.emit("pass_turn", gameData, (response: any) => {
+                // console.log(response)
                 setMyTurn(false)
                 setIsDragging(false)
                 setICanPassTurn(false)
             })
-        } 
+        }
     }
 
 
 
     return (
         <div>
-            {gameData?.players.filter(el=>el.socket_id!=user.socketId).map((el, index) => {
-                return(
-                    <div>
+
+            <Modal playerCards={playerCards} gameData={gameData} playCard={playCard}/>
+
+            {gameData?.players.filter(el => el.socket_id != user.socketId).map((el, index) => {
+                return (
+                    <div key={el}>
                         <p>{el.name}</p>
                         <img className='w-10' src={el.img_avatar} alt="" srcset="" />
                         <div className='flex'>
-                        {el.deck.map(el => <img className='w-10' src={cardBack}/>)}
-                        {el.deck.length} Cartas restantes
+                            {el.deck.map(el => <img className='w-10' src={cardBack} />)}
+                            {el.deck.length} Cartas restantes
                         </div>
                     </div>
-                    
+
                 )
             })}
 
@@ -163,7 +165,7 @@ function Game() {
             {myTurn ? <p>Sua vez de jogar</p> : <p>Aguarde sua vez jogar</p>}
             <div className='flex gap-5'>
                 {playerCards?.length > 0 && playerCards.map((el, index) => {
-                    return <img onClick={() => playCard(el)} onDoubleClick={()=>playCard(el)} key={index} className='w-14 cursor-pointer' src={cardImages[el.name]} />;
+                    return <img onClick={() => playCard(el)} onDoubleClick={() => playCard(el)} key={index} className='w-14 cursor-pointer' src={cardImages[el.name]} />;
                 })}
             </div>
 

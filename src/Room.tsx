@@ -8,7 +8,7 @@ function Room() {
   const location = useLocation();
   const { state } = location;
 
-  console.log(state)
+  // console.log(state)
   const [usersConected, setUsersConected] = React.useState([]);
   const [deck, setDeck] = React.useState([]);
   const [data, setData] = React.useState('');
@@ -18,14 +18,14 @@ function Room() {
   React.useEffect(() => {
 
     socket.on("setup_game", (response: any) => {
-      console.log(response)
+      // console.log(response)
       setUsersConected(response.players)
       setDeck(response.deck)
       setData(response)
     })
 
     socket.on("start_game", (response:any)=>{
-      console.log(response)
+      // console.log(response)
       setGameStart(response)
      setPlayed(true)
     })
